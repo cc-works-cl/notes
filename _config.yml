@@ -1,0 +1,28 @@
+title: "AI使い分けマップ — 補足ノート"
+description: "副業サラリーマンのための AI 使い分けシリーズ (note) の取材レポート全文置き場。"
+author: cc-works-cl
+theme: jekyll-theme-minimal
+markdown: kramdown
+kramdown:
+  syntax_highlighter: rouge
+  auto_ids: true
+  toc_levels: 2..3
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+relative_links:
+  enabled: true
+  collections: false
+include:
+  - "*.md"
+exclude:
+  - README.md
+  - .gitignore
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
