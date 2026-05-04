@@ -20,12 +20,6 @@ title: AI使い分けマップ — 補足ノート
 
 - [Teams 議事録ダミー全文](./episode-01-chat/teams-transcript-sample) — 4ツール横並びで使った題材
 
-## 第3話 取材レポート (10本 + ボーナス pptx)
-
-[第3話 補足ノートのインデックス →](./episode-03-workflow/)
-
-3つのワークフロー (議事録自動化 / リサーチ→資料化 / 副業ブログ執筆) のステップごとの一次出力。**人間 41 分 + 一晩 AI 自走** で副業ブログ 1 本が進んだ実例つき。
-
 ## 第2話 取材レポート (8本)
 
 [第2話 補足ノートのインデックス →](./episode-02-agent/)
@@ -42,6 +36,12 @@ title: AI使い分けマップ — 補足ノート
   - [ChatGPT Deep Research × 主観的な意思決定](./episode-02-agent/c-chatgpt-deep-research)
 - D NotebookLM コラム:
   - [NotebookLM × 持ち込みソースの想定問答](./episode-02-agent/d-notebooklm)
+
+## 第3話 取材レポート (10本 + ボーナス pptx)
+
+[第3話 補足ノートのインデックス →](./episode-03-workflow/)
+
+3つのワークフロー (議事録自動化 / リサーチ→資料化 / 副業ブログ執筆) のステップごとの一次出力。**人間 41 分 + 一晩 AI 自走** で副業ブログ 1 本が進んだ実例つき。W2-3 では ChatGPT が生成した [実 PowerPoint と10スライド画像](./episode-03-workflow/sample-slides/) も掲載。
 
 ---
 

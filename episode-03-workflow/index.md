@@ -32,7 +32,8 @@ note 本編「AI使い分けマップ【ワークフロー編】チャット × 
 
 - W2-1. Gemini Deep Research — [第2話の同題材レポートを再利用 →](../episode-02-agent/a-gemini-deep-research)
 - [W2-2. NotebookLM 想定問答](./w2-2_notebooklm-output) — 持ち込みソース内で対話、引用付き回答
-- [W2-3. ChatGPT 10スライド構成案](./w2-3_chatgpt-output) — 構成案 + ストーリー解説 + **実 PowerPoint まで生成**
+- [W2-3. ChatGPT 10スライド構成案](./w2-3_chatgpt-output) — 構成案 + ストーリー解説
+- [W2-3 ボーナス: ChatGPT が生成した実 PowerPoint + 10スライド画像](./sample-slides/) — `.pptx` ダウンロード可
 
 ## ワークフロー3: 副業ブログ執筆
 
