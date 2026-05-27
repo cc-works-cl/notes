@@ -24,7 +24,7 @@ git clone https://github.com/cc-works-cl/task-mesh-tag-mvp.git
 cd task-mesh-tag-mvp
 
 # Postgres 起動 (pg_trgm 拡張入り)
-docker compose up -d postgres
+docker-compose up -d postgres
 
 # 依存と migration
 pnpm install
