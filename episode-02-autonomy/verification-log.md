@@ -4,82 +4,99 @@ title: Claude Code 一晩自走の生ログ — 第2話【自走実装編】
 
 # Claude Code 一晩自走の生ログ
 
-本ページは note 本編 (第2話) の line 110 で参照される **Claude Code 単独実走の raw log** を置く場所です。
+note 本編 (第2話) の line 110-118 で参照される **Claude Code 単独実走の raw log** です。
 
 ## 検証環境
 
 - リポジトリ: [`cc-works-cl/task-mesh-tag-mvp`](https://github.com/cc-works-cl/task-mesh-tag-mvp)
+- PR: [#12 feat(tags): Tag CRUD 4 API + GET /tags/stats](https://github.com/cc-works-cl/task-mesh-tag-mvp/pull/12)
+- ブランチ: `feat/tags-crud-and-stats`
 - ホスト: macOS (Apple Silicon)
-- Node.js 20 / pnpm 9 / Postgres 16 (Docker)
-- Claude Code: Claude Max 20x プラン、モデルは Claude Opus
-- 投入 Issue: #1 (Tag CRUD 4 API) + #2 (タグ件数集計エンドポイント)
+- Node.js v22.14.0 / pnpm 11.4.0 / Postgres 16 (Colima + docker-compose V1)
+- Claude Code: Claude Max 20x プラン、モデル Claude Opus 4.7 (1M context)
+- 投入 Issue: [#1 Tag CRUD 4 API](https://github.com/cc-works-cl/task-mesh-tag-mvp/issues/1) + [#2 タグ件数集計エンドポイント](https://github.com/cc-works-cl/task-mesh-tag-mvp/issues/2)
 
-## 実走スケジュール (予定)
+## 実走サマリ
 
-| 日時 | フェーズ | 内容 |
-|---|---|---|
-| 2026-05-28 (本日昼) | A-pre | Stop.sh フックの単体動作確認済み (exit 0 / exit 1 + STOP メッセージ) |
-| 2026-05-28 22:00 | B-1 投入 | `tmux new -s overnight-cc` → `caffeinate -i claude` → 30 行仕様 + 運用指示貼付 |
-| 2026-05-29 07:00 | B-1 朝確認 | `./scripts/morning-collect.sh claude-code` で数値取得 |
-| 2026-05-29 朝以降 | D-1 反映 | 本文 line 110 の数値を実測値で差し替え |
+| 指標 | 実測値 |
+|---|---|
+| 投入準備 + プラン承認 | 約 2 分 |
+| **コミット時刻ベース自走時間** | **3 分 24 秒** (00:55:21 → 00:58:45 JST) |
+| Cooked (チャット セッション total) | 9 分 26 秒 |
+| 壁時計 (人間が見るまでの待ち) | 約 6 時間 (00:58 完了 → 朝 7 時頃確認) |
+| コミット数 | **10** |
+| 追加行 / 削除行 | +454 / -9 |
+| ファイル数 | 8 |
+| 生成テスト | 15 本 (tags 12 + tags-stats 3) |
+| 既存テスト reg | **0 件** (health.test.ts 1 本緑維持) |
+| テスト pass 率 | **16/16 (100%)** |
+| 朝修正時間 | **0 分** (16/16 緑のため修正不要) |
+| 依存追加 | 0 件 (allowlist 厳守) |
+| Stop.sh 発火 | なし (同一ファイル連続コミット最大 2、5 未満) |
 
-## 取得予定の数値
-
-`./scripts/morning-collect.sh claude-code "2026-05-28 22:00:00"` で以下が JSONL に追記される:
-
-```json
-{
-  "ts": "<ISO8601>",
-  "kind": "coding-agent-overnight",
-  "sprint_id": "2026-07-W27-ai-coding-mapping-autonomy",
-  "tool": "claude-code",
-  "repo": "cc-works-cl/task-mesh-tag-mvp",
-  "issue_ids": ["#1", "#2"],
-  "prep_minutes": <投入準備 (分)>,
-  "self_run_minutes": <自走時間 (分)>,
-  "wall_clock_minutes": <壁時計 (分)>,
-  "commits": <コミット数>,
-  "tests_generated_total": <生成テスト本数>,
-  "tests_generated_pass": <pass 数>,
-  "tests_existing_reg": <既存テストの壊れ数>,
-  "morning_fix_minutes": <朝修正 (分)>,
-  "failure_mode": null,
-  "verdict": "pass"
-}
-```
-
-## 実測値 (取得後に追記)
-
-> 2026-05-29 朝、実走完了時に本セクションを更新します。
-
-```jsonl
-(placeholder: B-1 実走完了後に JSONL 1 行を貼り付け)
-```
-
-### コミット履歴の抜粋
+## コミット履歴 (1 関心事 / 1 コミット)
 
 ```bash
-$ git log --oneline --since="2026-05-28 22:00" main..feat/tags-crud
-(placeholder: 朝の git log 出力を貼り付け)
+$ git log --oneline --reverse main..feat/tags-crud-and-stats
+4e1c47e feat(repository): add tag-repository with CRUD methods
+024b0c3 feat(service): add tag-service with zod validation
+b45e611 feat(api): add tags router with POST/GET/PATCH/DELETE
+6898508 feat(app): mount tags router in createApp
+9036a2b test(tags): cover CRUD 4 endpoints with supertest
+5525183 feat(repository): add count and groupBy methods to tag-repository
+f084542 feat(api): add tags-stats router with GET /stats
+3216977 feat(app): mount tags-stats router before tags router
+13a2de0 chore(test): disable vitest file parallelism
+b566a6c test(tags-stats): seed 3 users and assert aggregate counts
 ```
 
-### vitest 出力の抜粋
+Repository → Service → API → mount → test → (集計版) Repository → API → mount → test config → test の **層別ボトムアップ順** で進んでいる。`git revert <SHA>` で単位ごとに巻き戻せる粒度。
 
-```bash
-$ pnpm test --reporter=verbose
-(placeholder: vitest 出力を貼り付け)
+## 設計判断 (Claude Opus が判断保留で出してきた 3 件)
+
+CLAUDE.md の責務 3 行ルール + 判断保留ルールが効いて、Claude Opus は plan 段階で以下 3 つを「人間に承認を求めます」と提示してきた:
+
+1. **ownerId は `X-Owner-Id` ヘッダ伝達**
+   - 理由: Issue #1 の POST body スキーマ `{ name, description?, scope? }` を変更しない要件と、認可ロジックを Service / API 層に分離したい要件の整合を取るため
+   - 承認後: `b45e611 feat(api): add tags router with POST/GET/PATCH/DELETE`
+
+2. **`/tags/stats` を `/tags/:id` より先にマウント**
+   - 理由: Express のルートマッチング順序で `/tags/:id` が `id="stats"` を吸ってしまうとルート競合
+   - 承認後: `3216977 feat(app): mount tags-stats router before tags router`
+
+3. **集計は `Prisma.groupBy(by: ['ownerId'])` で N+1 回避**
+   - 理由: ownerId ごとに count を `findMany` でループ取得すると N+1、Prisma の `groupBy` で 1 クエリに集約
+   - 承認後: `5525183 feat(repository): add count and groupBy methods to tag-repository`
+
+これらが「**判断保留ルール (`docs/CLAUDE.md`)** が機能した実例」で、AI が独断で設計判断をすり抜けるのを構造的に防いだ成功パターン。
+
+## 計画外追加 (vitest.config.ts、ユーザ承認済)
+
+複数 PrismaClient (test ファイル並列実行で生成) による Postgres 接続競合で **3 件のテストが落ちた** → AI が「`fileParallelism: false` を設定すれば解消できる、これは依存追加ではなく既存 vitest の設定ファイル」と plan で提案、ユーザ承認後にコミット (`13a2de0`):
+
+```typescript
+// vitest.config.ts (新規追加)
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  test: {
+    fileParallelism: false,
+  },
+});
 ```
 
-### package.json diff (依存追加の確認)
-
-```bash
-$ git diff main feat/tags-crud -- package.json
-(placeholder: 依存追加があれば貼り付け)
-```
+CLAUDE.md の依存 allowlist は変更なし、vitest 自体は既に devDependencies に入っているため設定ファイルの追加のみで完結。
 
 ## 観察コメント
 
-(placeholder: 実測完了後に「期待値とのギャップ」「Stop.sh が発火したか」「設計判断ミスの有無」を 200-400 字でまとめる)
+- **Claude Opus 4.7 の速さ**: 3 分 24 秒で 10 コミット = 1 コミットあたり 20 秒。ファイル間の依存関係を理解した上での順次実装で、待ち時間がほぼ無し
+- **「夜実装する → 朝確認する」物語との整合**: AI 自走は 3 分 24 秒で完了、その後ブランチが緑のまま **約 6 時間静止** して朝のレビューを待つ → 「壁時計で夜から朝」の物語構造は維持
+- **責務 3 行ルール厳守**: `tag-repository.ts` に `RoleService` や `User` の import が一切なく、Tag のみ扱う Repository の純粋性が保たれている
+- **コミット粒度**: 同一ファイル連続コミットは `src/index.ts` の 2 回 (tags router mount + stats router mount) のみで、Stop.sh フック (5 連続で停止) は不発火。CLAUDE.md ルール通り
+
+## reproduce 手順
+
+このログの数値を読者の方が自分で再現する手順は [reproduce](./reproduce) を参照。基本的には `git clone` → `docker-compose up -d postgres` → `pnpm install` → `pnpm prisma migrate dev` → Claude Code に Issue #1 + #2 を投入、で同じ結果が得られる想定です (Opus 4.7 のスピードは AI 側のバージョンによって変動する可能性あり)。
 
 ---
 
